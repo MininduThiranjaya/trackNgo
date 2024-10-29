@@ -49,7 +49,7 @@ const RouteMap = ({routeId}) => {
     const fetchRouteData = async () => {
         try {
             // Fetch route data from backend
-            const response = await axios.post('https://ba12-192-248-57-153.ngrok-free.app/api/get-route', {
+            const response = await axios.post('http://localhost:8080/api/get-route', {
                 sourceLocation,
                 destinationLocation
             });
@@ -75,7 +75,7 @@ const RouteMap = ({routeId}) => {
                 const sourceLocation = (cities[i]);
                 const destinationLocation = (cities[i + 1]);
 
-                const response = await axios.post('https://ba12-192-248-57-153.ngrok-free.app/api/get-location-code-search-by-name', {
+                const response = await axios.post('http://localhost:8080/api/get-location-code-search-by-name', {
                                 sourceLocation,
                                 destinationLocation
                             });
