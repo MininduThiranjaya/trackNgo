@@ -3,7 +3,6 @@ const Route = require('./models/busRoute');
 
 const axios = require('axios');
 
-// Get bus location from the database continously
 async function get_bus_location(req, res) {
 
     try {
@@ -14,7 +13,6 @@ async function get_bus_location(req, res) {
     }
 }
 
-// Get location code by converting location name 
 async function get_location_code_search_by_name(req, res) {
 
     const { sourceLocation, destinationLocation } = req.body;
@@ -73,20 +71,25 @@ async function get_location_code_search_by_name(req, res) {
     }
 }
 
-// Get all route path from database
-async function get_route(req, res) {
+
+
+
+async function get_buses(req, res) {
 
     const { sourceLocation, destinationLocation } = req.body;
 
+    console.log(sourceLocation)
+    console.log(destinationLocation)
+
     try {
-        const route = await Route.findOne({
+        const busRouteWithBus = await Route.findOne({
             $and: [
                 { $expr: { $eq: ["$source", `${sourceLocation}`] } },
                 { $expr: { $eq: ["$destination", `${destinationLocation}`] } }
             ]
         });
-        console.log(route)
-        res.json({route});
+        console.log(busRouteWithBus)
+        res.json({busRouteWithBus});
     } catch (error) {
         res.status(500).json({ message: 'Error fetching route', error });
     }  
@@ -95,5 +98,5 @@ async function get_route(req, res) {
 module.exports = {
     get_bus_location,
     get_location_code_search_by_name,
-    get_route
+    get_buses
 }
