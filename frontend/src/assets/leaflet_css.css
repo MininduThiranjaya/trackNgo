@@ -1,0 +1,11 @@
+.leaflet-control-custom {
+    background: none !important; /* Removes the black background */
+    border: none !important;     /* Removes any border */
+    box-shadow: none !important; /* Removes shadow */
+}
+
+.highlight-label {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 1.1em;
+}
