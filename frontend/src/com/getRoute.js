@@ -1,18 +1,12 @@
-// import React, { useEffect, useState } from 'react';
-// import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
-import L from 'leaflet';
-// import LocationIcon from './locationIcon';
 import SubLocationIcon from './subLocationIcon';
-
 
 //search 
 import React, { useState, useEffect} from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline  } from 'react-leaflet';
-// import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import LocationIcon from './locationIcon';
 import polyline from '@mapbox/polyline';
-
+import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 // Define a function for geocoding
@@ -32,33 +26,33 @@ const geocodeCity = async (city) => {
 // Main component
 const RouteMap = ({routeId}) => {
 
+    console.log(routeId)
+
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
 
     //search
+    // const [destinationPosition, setDestinationPosition] = useState([51.505, -0.09]); // Default center
+    // const [routePathDecode, setRoutePathDecode] = useState([]); // Route coordinates
+    // const [routePathEncode, setRoutePathEncode] = useState([]); // Route coordinates
     const [sourcePosition, setSourcePosition] = useState([7.8731, 80.7718]); // Default center
-    const [destinationPosition, setDestinationPosition] = useState([51.505, -0.09]); // Default center
-    const [sourceLocation, setSourceLocation] = useState(""); // User input for location name
-    const [destinationLocation, setDestinationLocation] = useState(""); // User input for location name
-    const [routePathDecode, setRoutePathDecode] = useState([]); // Route coordinates
-    const [routePathEncode, setRoutePathEncode] = useState([]); // Route coordinates
     const [routeSegment, setRouteSegment] = useState([]); // Route coordinates
     const [error, setError] = useState("");
 
-    
-    const fetchRouteData = async () => {
-        try {
+    useEffect(() => {
+
+        const fetchRouteData = async (routeId) => {
+
+         try {
             // Fetch route data from backend
-            const response = await axios.post('http://localhost:8080/api/get-route', {
-                sourceLocation,
-                destinationLocation
+            const response = await axios.post('http://localhost:8080/api/get-specific-bus-route', {
+                routeId
             });
             
-            //const response = await fetch(`http://localhost:8080/api/get-route/${routeId}`);
-            const {route} = response.data;
+            const {specificBusRoute} = response.data;
 
             // Gather all cities
-            const cities = [route.source, ...route.stops, route.destination];
+            const cities = [specificBusRoute.source, ...specificBusRoute.stops, specificBusRoute.destination];
             const coords = [];
 
             // Fetch coordinates for each city
@@ -106,109 +100,94 @@ const RouteMap = ({routeId}) => {
             console.error('Error fetching route or coordinates:', error);
             setLoading(false);
         }
-    };
+    }
 
-    if (loading) return (<>
-        <input
-                type="text"
-                value={sourceLocation}
-                placeholder="Enter source location name"
-                onChange={(e) => setSourceLocation(e.target.value)}
-            />
-            <input
-                type="text"
-                value={destinationLocation}
-                placeholder="Enter destination location name"
-                onChange={(e) => setDestinationLocation(e.target.value)}
-            />
+    fetchRouteData(routeId);
 
-            <button onClick={fetchRouteData}>Find Location</button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+    },[routeId])
 
-            <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
+    if (loading) return (
+    <>
+        <Container fluid>
+            <Row className="justify-content-center mt-3">
+                <Col xs={12} md={12} lg={12} style={{ height: '400px'}}>
+                    <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
 
-               <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-            </MapContainer>
+                        <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                    </MapContainer>
+                </Col>
+            </Row>
+        </Container>
     </>);
 
     return (
         <>
-            <input
-                type="text"
-                value={sourceLocation}
-                placeholder="Enter source location name"
-                onChange={(e) => setSourceLocation(e.target.value)}
-            />
-            <input
-                type="text"
-                value={destinationLocation}
-                placeholder="Enter destination location name"
-                onChange={(e) => setDestinationLocation(e.target.value)}
-            />
+            <Container fluid>
+                <Row className="justify-content-center mt-3">
+                    <Col xs={12} md={12} lg={12} style={{ height: '400px', position: 'relative' }}>
+                        <MapContainer center={locations[0].coords} zoom={10} style={{ height: '500px', width: '100%' }}>
+                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-            <button onClick={fetchRouteData}>Find Location</button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-
-            <MapContainer center={locations[0].coords} zoom={10} style={{ height: '500px', width: '100%' }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-                {/* Plot markers and polyline */}
-                {
-                    locations.map((location, index) => {
-                        
-                        if(index === 0 ) {
-                            return (
-                                <>
-                                    <Marker key={index} position={location.coords} icon={LocationIcon}>
-                                        <Popup>
-                                            Starts : {location.name}
-                                        </Popup>
-                                    </Marker>
-                                    <MapZoomCenter position={locations[0].coords} />
-                                </>
-                            )
-                        }
-                        else if(index === locations.length-1) {
-                            return (
-                                <>
-                                    <Marker key={index} position={location.coords} icon={LocationIcon}>
-                                        <Popup>
-                                            Ends : {location.name}
-                                        </Popup>
-                                    </Marker>
-                                    <MapZoomCenter position={locations[0].coords} />
-                                </>
-                            )
-                        }
-                        else {
-                            return (
-                                <>
-                                    <Marker key={index} position={location.coords} icon={SubLocationIcon}>
-                                        <Popup>{location.name}</Popup>
-                                    </Marker>
-                                    <MapZoomCenter position={locations[0].coords} />
-                                </>
-                            )
-                        }    
-                    })
-                }
-                {
-                    (routeSegment.length > 0 && (
-                        <Polyline
-                            positions={routeSegment.map((seg, index) => {
-                                const decode = polyline.decode(seg[0]).map(([lat, lng]) => ({lat,lng}))
-                                return (decode);
-                            })}
-                            color="blue"
-                            weight={4}
-                            opacity={0.3}
-                        />
-                    ))
-                }
-            </MapContainer>
+                            {/* Plot markers and polyline */}
+                            {
+                                locations.map((location, index) => {
+                                    
+                                    if(index === 0 ) {
+                                        return (
+                                            <>
+                                                <Marker key={index} position={location.coords} icon={LocationIcon}>
+                                                    <Popup>
+                                                        Starts : {location.name}
+                                                    </Popup>
+                                                </Marker>
+                                                <MapZoomCenter position={locations[0].coords} />
+                                            </>
+                                        )
+                                    }
+                                    else if(index === locations.length-1) {
+                                        return (
+                                            <>
+                                                <Marker key={index} position={location.coords} icon={LocationIcon}>
+                                                    <Popup>
+                                                        Ends : {location.name}
+                                                    </Popup>
+                                                </Marker>
+                                                <MapZoomCenter position={locations[0].coords} />
+                                            </>
+                                        )
+                                    }
+                                    else {
+                                        return (
+                                            <>
+                                                <Marker key={index} position={location.coords} icon={SubLocationIcon}>
+                                                    <Popup>{location.name}</Popup>
+                                                </Marker>
+                                                <MapZoomCenter position={locations[0].coords} />
+                                            </>
+                                        )
+                                    }    
+                                })
+                            }
+                            {
+                                (routeSegment.length > 0 && (
+                                    <Polyline
+                                        positions={routeSegment.map((seg, index) => {
+                                            const decode = polyline.decode(seg[0]).map(([lat, lng]) => ({lat,lng}))
+                                            return (decode);
+                                        })}
+                                        color="blue"
+                                        weight={4}
+                                        opacity={0.5}
+                                    />
+                                ))
+                            }
+                        </MapContainer>
+                    </Col>
+                </Row>
+            </Container>
         </>
     );
 };
