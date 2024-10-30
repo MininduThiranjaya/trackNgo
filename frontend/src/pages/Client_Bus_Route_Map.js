@@ -9,15 +9,16 @@ import RouteMap from '../com/getRoute';
 
 
 function Client_Bus_Route_Map() {
-    const { id } = useParams();
-    console.log(id)
+    const { routeId, busId} = useParams();
+    console.log(routeId)
+    console.log(busId)
     
 
     return (
-        (id ?
+        (routeId && busId ?
             (
                 <>
-                    <RouteMap routeId={id}/>
+                    <RouteMap routeId={routeId}/>
                 </>
             ):(
                 <>
