@@ -18,7 +18,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Client_Home />} />
-                <Route path="/client-bus-route-map/:id" element={<Client_Bus_Route_Map />} />
+                <Route path="/client-bus-route-map/:routeId/:busId" element={<Client_Bus_Route_Map />} />
             </Routes>
         </Router>
     );
