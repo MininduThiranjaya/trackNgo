@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 
 
 function BusCard({busRouteWithBus}) {
@@ -35,37 +36,57 @@ function BusCard({busRouteWithBus}) {
                     <p>
                       <b>Buses :</b> 
                     </p>
+                    <Container>
+                      <Row className='g-2'>
                         {
-                          ((e.busName.length > 1)?
+                          ((e.busInfo.length > 0)?
                           (
-                            e.busName.map((e, index) => {
+                            e.busInfo.map((bus, index) => {
                               return (
-                                <Container>
-                                  <Row>
-                                    <Col>{e}</Col>
-                                    <Col>Location</Col>
-                                    <Col>Status</Col>
-                                  </Row>
-                                </Container>
+                                <>
+                                <hr></hr>
+                                  <Col xs={12} md={2}>{bus.busNameId}</Col>
+                                  <Col xs={12} md={3}>Location</Col>
+                                  <Col xs={12} md={4}>
+                                  {
+                                    console.log()
+                                  }
+                                  {
+                                    (bus.isActive ?
+                                      ( 
+                                        <>
+                                          Available <FontAwesomeIcon icon={faCircleDot} size="lg"  className='px-1' style={{color: "#63E6BE"}}/>
+                                        </>
+                                      ):(
+                                        <>
+                                          Not Available <FontAwesomeIcon icon={faCircleDot} size="lg"  className='px-1' style={{color: "#de2f1b"}}/>
+                                        </>
+                                      )
+                                    )
+                                  }
+                                    
+                                  </Col>
+                                  <Col xs={12} md={3}>
+                                  <NavLink to={`/client-bus-route-map/${e._id}/${bus.busNameId}`} activeClassName="active">
+                                    <FontAwesomeIcon icon={faLocationCrosshairs} size="lg"  className='px-1' style={{color: "#3512e2"}} />
+                                    Find Me
+                                  </NavLink>
+                                  </Col>
+                                  <hr></hr>
+                                </>
                               )
                             })
                           ):(
-                            <Container>
-                              <Row>
-                                <Col>{e.busName}</Col>
-                                <Col>Location</Col>
-                                <Col>Status</Col>
-                              </Row>
-                            </Container>
+                            <>
+                              <hr></hr>
+                                <Col xs={12} md={3}><p>No buses have assign for this route path</p></Col>
+                              <hr></hr>
+                            </>  
                           ))
                         }
-
+                      </Row>
+                    </Container>
                   </Card.Text>
-                  <NavLink to={`/client-bus-route-map/${e._id}`} activeClassName="active">
-                    <FontAwesomeIcon icon={faLocationCrosshairs} size="lg"  className='px-1' style={{color: "#3512e2"}} />
-                    Find Me
-                  </NavLink>
-
                 </Card>
               </Col>
             )
