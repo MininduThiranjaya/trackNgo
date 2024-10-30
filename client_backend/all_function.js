@@ -92,33 +92,51 @@ async function get_buses(req, res) {
         const busRouteWithBus = await Route.aggregate(
             [
                 {
-                    "$match":
-                    {
-                        "source":sourceLocation,
-                        "destination":destinationLocation
+                    "$match": {
+                        "source": "polonnaruwa",
+                        "destination": "kurunegala"
                     }
                 },
                 {
-                    "$lookup":
-                    {
-                        "from":"bus",
-                        "localField":"busName",
-                        "foreignField":"busNameId",
-                        "as":"details"
+                    "$lookup": {
+                        "from": "buses",
+                        "localField": "busName",
+                        "foreignField": "busNameId",
+                        "as": "details"
                     }
                 },
-                
                 {
-                    "$project":
-                    {
-                        "_id":1,
-                        "source":1,
-                        "stops":1,
-                        "destination":1,
-                        "busName":1,
+                    "$unwind": {
+                        "path": "$details"
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": {
+                            "_id": "$_id",
+                            "source": "$source",
+                            "stops": "$stops",
+                            "destination": "$destination",
+                        },
+                        "busInfo": {                           // Aggregate bus info into an array
+                            "$push": {
+                                "busNameId": "$details.busNameId",
+                                "isActive": "$details.isActive"
+                            }
+                        }
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": "$_id._id",
+                        "source": "$_id.source",
+                        "stops": "$_id.stops",
+                        "destination": "$_id.destination",
+                        "busInfo": 1                           // Include the aggregated bus info array
                     }
                 }
             ]
+            
         )
         console.log(busRouteWithBus)
         res.json({busRouteWithBus});
