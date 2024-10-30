@@ -10,7 +10,10 @@ import axios from 'axios';
 function HeaderAndFooterExample() {
 
     const [selectedCities, setCities] = useState([]);
-    const [status, setStatus] = useState();
+    const [inputValueSource, setInputValueSource] = useState();
+    const [inputValueDestination, setInputValueDestination] = useState();
+    const [searchStatus, setStatus] = useState();
+    const [isSelectedCity, setIsSelectedCity] = useState(false);
     let [sourceLocation, setStart] = useState();
     let [destinationLocation, setEnd] = useState();
     const [busRoute, setBusRouteWithBus] = useState();
@@ -60,18 +63,55 @@ function HeaderAndFooterExample() {
     function findCity(cityName, status) {
 
         setStatus(status);
+        setIsSelectedCity(false)
 
-        const selected = cities.filter((city) => (
-            city.toLocaleLowerCase().includes(cityName.toLocaleLowerCase())
-        ))
-
-        setCities(selected);
-        console.log(selectedCities);
+        if(status === 'start') {
+            setInputValueSource(cityName);
+            if (inputValueSource) {
+                const selected = cities.filter((city) => (
+                    city.toLocaleLowerCase().includes(cityName.toLocaleLowerCase())
+                ))
+                setCities(selected);
+            }
+            else {
+                setBusRouteWithBus('');
+                setCities([]);
+            }
+        }
+        else {
+            setInputValueDestination(cityName);
+            if (inputValueDestination) {
+                const selected = cities.filter((city) => (
+                    city.toLocaleLowerCase().includes(cityName.toLocaleLowerCase())
+                ))
+                setCities(selected);
+            }
+            else {
+                setBusRouteWithBus('');
+                setCities([]);
+            }
+        }
     }
 
     {
         console.log(sourceLocation)
         console.log(destinationLocation)
+    }
+
+    function handleSelectedCity(city_onClick, status) {
+
+        if(status === 'start') {
+            setInputValueSource(city_onClick)
+            setStart(city_onClick)
+            setIsSelectedCity(true)
+            setCities([]);
+        }
+        else {
+            setInputValueDestination(city_onClick)
+            setEnd(city_onClick)
+            setIsSelectedCity(true)
+            setCities([]);
+        }
     }
 
     async function busRouteWithBus () {
@@ -87,17 +127,22 @@ function HeaderAndFooterExample() {
             });
             
             //const response = await fetch(`http://localhost:8080/api/get-route/${routeId}`);
-            const {route} = response.data;
+            const {busRouteWithBus} = response.data;
 
             // Gather all cities
-            setBusRouteWithBus(route);
-            console.log(route)
+            setBusRouteWithBus(busRouteWithBus);
+            console.log(busRouteWithBus)
             
             }
         catch (error) {
             console.error('Error fetching route or coordinates:', error);
         }
     };
+     
+    // useEffect(() => (
+
+    // ),[so])
+
 
     return (
         <>    
@@ -110,15 +155,15 @@ function HeaderAndFooterExample() {
                         <Container>
                             <Row>
                                 <Col>
-                                    <Form.Control text={sourceLocation} onChange={(e) => findCity(e.target.value, 'start') } type="text" placeholder="Starts Location" />
+                                    <Form.Control text='text' value={inputValueSource} onChange={(e) => findCity(e.target.value, 'start') } type="text" placeholder="Starts Location" />
                                     <ul>
                                         {
                                             selectedCities.map((city, index) => {
                 
-                                                if(status === 'start') {
+                                                if(searchStatus === 'start') {
                                                     return (
                                                     <li key={index} onClick={() => {
-                                                        setStart(city)
+                                                        handleSelectedCity(city,'start')
                                                     }}>{city}</li>
                                                     )
                                                 }
@@ -127,15 +172,15 @@ function HeaderAndFooterExample() {
                                     </ul>
                                 </Col>
                                 <Col>
-                                    <Form.Control text={destinationLocation} onChange={(e) => findCity(e.target.value, 'end')} type="text" placeholder="Ends Location" />
+                                    <Form.Control text='text' value={inputValueDestination} onChange={(e) => findCity(e.target.value, 'end')} type="text" placeholder="Ends Location" />
                                     <ul>
                                     {
                                             selectedCities.map((city, index) => {
                 
-                                                if(status === 'end') {
+                                                if(searchStatus === 'end') {
                                                     return (
                                                     <li key={index} onClick={() => {
-                                                        setEnd(city)
+                                                        handleSelectedCity(city,'end')
                                                     }}>{city}</li>
                                                     )
                                                 }
@@ -156,9 +201,21 @@ function HeaderAndFooterExample() {
                     <Card.Footer className="text-muted">Search for more results</Card.Footer>
                 </Card>
             </Row>
-            {/* <Row>
-                <BusCard busRouteWithBus={busRoute}/>
-            </Row> */}
+
+            {
+                (busRoute?(
+                    <Row>
+                        <BusCard busRouteWithBus={busRoute}/>
+                    </Row> 
+                ):(<Row>
+                    <center>
+                        <br></br>
+                        <p>No Search Services</p>
+                    </center>
+                </Row>))
+            }
+
+           
         </>
     );
 }
