@@ -82,7 +82,7 @@ async function get_buses(req, res) {
     console.log(destinationLocation)
 
     try {
-        const busRouteWithBus = await Route.findOne({
+        const busRouteWithBus = await Route.find({
             $and: [
                 { $expr: { $eq: ["$source", `${sourceLocation}`] } },
                 { $expr: { $eq: ["$destination", `${destinationLocation}`] } }
