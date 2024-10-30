@@ -1,13 +1,16 @@
 import SubLocationIcon from './subLocationIcon';
 
 //search 
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import React, { useState, useEffect} from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline  } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import LocationIcon from './locationIcon';
 import polyline from '@mapbox/polyline';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
+import LocateUserButton from './locateUserCustomButton';
 
 // Define a function for geocoding
 const geocodeCity = async (city) => {
@@ -23,6 +26,12 @@ const geocodeCity = async (city) => {
     }
 };
 
+const customIcon = new L.Icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+});
+
 // Main component
 const RouteMap = ({routeId}) => {
 
@@ -37,6 +46,7 @@ const RouteMap = ({routeId}) => {
     // const [routePathEncode, setRoutePathEncode] = useState([]); // Route coordinates
     const [sourcePosition, setSourcePosition] = useState([7.8731, 80.7718]); // Default center
     const [routeSegment, setRouteSegment] = useState([]); // Route coordinates
+
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -102,9 +112,9 @@ const RouteMap = ({routeId}) => {
         }
     }
 
-    fetchRouteData(routeId);
+     fetchRouteData(routeId);
 
-    },[routeId])
+    },[]);
 
     if (loading) return (
     <>
@@ -112,11 +122,12 @@ const RouteMap = ({routeId}) => {
             <Row className="justify-content-center mt-3">
                 <Col xs={12} md={12} lg={12} style={{ height: '400px'}}>
                     <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
-
+                    <LocateUserButton/>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
+                        
                     </MapContainer>
                 </Col>
             </Row>
@@ -130,6 +141,8 @@ const RouteMap = ({routeId}) => {
                     <Col xs={12} md={12} lg={12} style={{ height: '400px', position: 'relative' }}>
                         <MapContainer center={locations[0].coords} zoom={10} style={{ height: '500px', width: '100%' }}>
                             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+                            <LocateUserButton/>
 
                             {/* Plot markers and polyline */}
                             {
@@ -194,6 +207,7 @@ const RouteMap = ({routeId}) => {
 
 //search
 const MapZoomCenter = ({ position }) => {
+    
     const map = useMap();
 
     useEffect(() => {
