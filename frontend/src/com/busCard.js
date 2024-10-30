@@ -6,11 +6,11 @@ function BusCard({busRouteWithBus}) {
   
   return (
     <Container className="my-3 p-4">
-      <Row xs={1} md={4} className='g-4 '>
+      <Row xs={1} md={3} className='g-4 '>
         {
-          busRouteWithBus.map((e) => {
+          busRouteWithBus.map((e, index) => {
             return (
-              <Col>
+              <Col key={index}>
                 <Card className="px-4" style={{ backgroundColor: '#f8f9fa' }}>
                   <Card.Title>Card with Equal Left and Right Padding</Card.Title>
                   <Card.Text>
