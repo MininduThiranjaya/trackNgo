@@ -4,7 +4,7 @@ const routeSchema = new mongoose.Schema({
     source: String,
     destination: String,
     stops:[String],
-    busId:[{type:mongoose.Schema.Types.ObjectId, ref:'Bus'}],
+    busName:[String],
     lastUpdated: { type: Date, default: Date.now },
 });
 
