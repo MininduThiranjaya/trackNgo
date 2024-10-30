@@ -82,12 +82,44 @@ async function get_buses(req, res) {
     console.log(destinationLocation)
 
     try {
-        const busRouteWithBus = await Route.find({
-            $and: [
-                { $expr: { $eq: ["$source", `${sourceLocation}`] } },
-                { $expr: { $eq: ["$destination", `${destinationLocation}`] } }
+        // const busRouteWithBus = await Route.find({
+        //     $and: [
+        //         { $expr: { $eq: ["$source", `${sourceLocation}`] } },
+        //         { $expr: { $eq: ["$destination", `${destinationLocation}`] } }
+        //     ]
+        // });
+
+        const busRouteWithBus = await Route.aggregate(
+            [
+                {
+                    "$match":
+                    {
+                        "source":sourceLocation,
+                        "destination":destinationLocation
+                    }
+                },
+                {
+                    "$lookup":
+                    {
+                        "from":"bus",
+                        "localField":"busName",
+                        "foreignField":"busNameId",
+                        "as":"details"
+                    }
+                },
+                
+                {
+                    "$project":
+                    {
+                        "_id":1,
+                        "source":1,
+                        "stops":1,
+                        "destination":1,
+                        "busName":1,
+                    }
+                }
             ]
-        });
+        )
         console.log(busRouteWithBus)
         res.json({busRouteWithBus});
     } catch (error) {
@@ -95,7 +127,26 @@ async function get_buses(req, res) {
     }  
 }
 
+async function get_route(req, res) {
+
+    const { routeId } = req.body;
+
+    console.log(routeId)
+
+    try {
+        const specificBusRoute = await Route.findById(routeId)
+
+        console.log(specificBusRoute)
+
+        res.json({specificBusRoute});
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching route', error });
+    }  
+}
+
+
 module.exports = {
+    get_route,
     get_bus_location,
     get_location_code_search_by_name,
     get_buses
