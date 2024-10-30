@@ -3,21 +3,24 @@ import React from 'react';
 import BusMap from './com/busmap';
 import MapWithGoogleGeocoding from './com/search';
 import RouteMap from './com/getRoute';
-import SearchRoute from './com/routeSearch';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Client_Home from './pages/Client_Home';     // Adjust the path as necessary
+import Client_Bus_Route_Map from './pages/Client_Bus_Route_Map';     // Adjust the path as necessary
+
 
 /* The following line can be included in a src/App.scss */
 
 
 function App() {
     return (
-        <div className="App">
-            <h1>Bus Tracking System</h1>
-            {/* <BusMap /> */}
-            {/* <MapWithGoogleGeocoding/> */}
-            {/* <RouteMap routeId={`671e19f3519de50e74239b95`}/> */}
-            <SearchRoute/>
-        </div>
+        <Router>
+            <Routes>
+                <Route path="/" element={<Client_Home />} />
+                <Route path="/client-bus-route-map/:id" element={<Client_Bus_Route_Map />} />
+            </Routes>
+        </Router>
     );
 }
 
