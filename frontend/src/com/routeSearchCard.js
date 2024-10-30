@@ -10,8 +10,8 @@ import axios from 'axios';
 function HeaderAndFooterExample() {
 
     const [selectedCities, setCities] = useState([]);
-    const [inputValueSource, setInputValueSource] = useState();
-    const [inputValueDestination, setInputValueDestination] = useState();
+    const [inputValueSource, setInputValueSource] = useState('');
+    const [inputValueDestination, setInputValueDestination] = useState('');
     const [searchStatus, setStatus] = useState();
     const [isSelectedCity, setIsSelectedCity] = useState(false);
     let [sourceLocation, setStart] = useState();
@@ -60,16 +60,17 @@ function HeaderAndFooterExample() {
         "Sevanapitiya"
     ];
     
-    function findCity(cityName, status) {
-
+    function findCity(e,status) {
+        
         setStatus(status);
         setIsSelectedCity(false)
 
         if(status === 'start') {
-            setInputValueSource(cityName);
+            setInputValueSource(e.target.value);
+            console.log(e.target.value)
             if (inputValueSource) {
                 const selected = cities.filter((city) => (
-                    city.toLocaleLowerCase().includes(cityName.toLocaleLowerCase())
+                    city.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
                 ))
                 setCities(selected);
             }
@@ -79,10 +80,11 @@ function HeaderAndFooterExample() {
             }
         }
         else {
-            setInputValueDestination(cityName);
+            setInputValueDestination(e.target.value);
+            console.log(e.target.value)
             if (inputValueDestination) {
                 const selected = cities.filter((city) => (
-                    city.toLocaleLowerCase().includes(cityName.toLocaleLowerCase())
+                    city.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())
                 ))
                 setCities(selected);
             }
@@ -93,14 +95,10 @@ function HeaderAndFooterExample() {
         }
     }
 
-    {
-        console.log(sourceLocation)
-        console.log(destinationLocation)
-    }
-
     function handleSelectedCity(city_onClick, status) {
 
         if(status === 'start') {
+        
             setInputValueSource(city_onClick)
             setStart(city_onClick)
             setIsSelectedCity(true)
@@ -116,8 +114,19 @@ function HeaderAndFooterExample() {
 
     async function busRouteWithBus () {
 
-        sourceLocation = sourceLocation.toLocaleLowerCase();
-        destinationLocation = destinationLocation.toLocaleLowerCase();
+        if(!sourceLocation) {
+            setStart(inputValueSource)
+        }
+        else{
+            sourceLocation = sourceLocation.toLowerCase();
+        }
+        
+        if(!destinationLocation){
+            setEnd(inputValueDestination);
+        }
+        else {
+            destinationLocation = destinationLocation.toLowerCase();
+        }
 
         try {
             // Fetch route data from backend
@@ -150,43 +159,53 @@ function HeaderAndFooterExample() {
                 <Card className="text-center">
                     <Card.Header></Card.Header>
                     <Card.Body>
-                    <Card.Title>Bus Routes</Card.Title>
+                    <Card.Title></Card.Title>
                     <Card.Text>
                         <Container>
                             <Row>
                                 <Col>
-                                    <Form.Control text='text' value={inputValueSource} onChange={(e) => findCity(e.target.value, 'start') } type="text" placeholder="Starts Location" />
-                                    <ul>
+                                    <Form.Control text='text' style={{ fontWeight: 'bold' }} value={inputValueSource} onChange={(e) => findCity(e, 'start') } type="text" placeholder="Starts Location" />
+
+                                    <br></br>
+                                    <div class="overflow-auto" style={{height:"120px"}}>
                                         {
                                             selectedCities.map((city, index) => {
                 
                                                 if(searchStatus === 'start') {
                                                     return (
-                                                    <li key={index} onClick={() => {
-                                                        handleSelectedCity(city,'start')
-                                                    }}>{city}</li>
+                                                        <>
+                                                            <hr></hr>
+                                                            <div key={index} onClick={() => {
+                                                                handleSelectedCity(city,'start')
+                                                            }}>{city}</div>
+                                                        </>
                                                     )
                                                 }
                                             })
                                         }
-                                    </ul>
+                                    </div>
                                 </Col>
                                 <Col>
-                                    <Form.Control text='text' value={inputValueDestination} onChange={(e) => findCity(e.target.value, 'end')} type="text" placeholder="Ends Location" />
-                                    <ul>
+                                    <Form.Control text='text' style={{ fontWeight: 'bold' }} value={inputValueDestination} onChange={(e) => findCity(e, 'end')} type="text" placeholder="Ends Location" />
+                                    
+                                    <br></br>
+                                    <div class="overflow-auto" style={{height:"120px"}}>
                                     {
                                             selectedCities.map((city, index) => {
                 
                                                 if(searchStatus === 'end') {
                                                     return (
-                                                    <li key={index} onClick={() => {
-                                                        handleSelectedCity(city,'end')
-                                                    }}>{city}</li>
+                                                   <>
+                                                        <hr></hr>
+                                                        <div key={index} onClick={() => {
+                                                                handleSelectedCity(city,'end')
+                                                        }}>{city}</div>
+                                                   </> 
                                                     )
                                                 }
                                             })
                                         }
-                                    </ul>
+                                    </div>
                                 </Col>
                             </Row>
                             <br></br>
