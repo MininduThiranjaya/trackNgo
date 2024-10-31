@@ -147,15 +147,10 @@ function HeaderAndFooterExample() {
             console.error('Error fetching route or coordinates:', error);
         }
     };
-     
-    // useEffect(() => (
-
-    // ),[so])
-
 
     return (
         <>    
-            <Row>
+            <Row className="mb-4">
                 <Card className="text-center">
                     <Card.Header></Card.Header>
                     <Card.Body>
@@ -163,22 +158,21 @@ function HeaderAndFooterExample() {
                     <Card.Text>
                         <Container>
                             <Row>
-                                <Col>
-                                    <Form.Control text='text' style={{ fontWeight: 'bold' }} value={inputValueSource} onChange={(e) => findCity(e, 'start') } type="text" placeholder="Starts Location" />
+                                <Col xs={12} md={6} className="mb-3">
+                                    <Form.Control text='text' style={{ fontWeight: 'bold'}} value={inputValueSource} onChange={(e) => findCity(e, 'start') } type="text" placeholder="Starts Location" />
 
-                                    <br></br>
-                                    <div class="overflow-auto" style={{height:"120px"}}>
+                                    <div class="overflow-auto" style={{height:"100px"}} >
                                         {
                                             selectedCities.map((city, index) => {
                 
                                                 if(searchStatus === 'start') {
                                                     return (
-                                                        <>
+                                                        <div>
                                                             <hr></hr>
                                                             <div key={index} onClick={() => {
                                                                 handleSelectedCity(city,'start')
                                                             }}>{city}</div>
-                                                        </>
+                                                        </div>
                                                     )
                                                 }
                                             })
@@ -188,8 +182,7 @@ function HeaderAndFooterExample() {
                                 <Col>
                                     <Form.Control text='text' style={{ fontWeight: 'bold' }} value={inputValueDestination} onChange={(e) => findCity(e, 'end')} type="text" placeholder="Ends Location" />
                                     
-                                    <br></br>
-                                    <div class="overflow-auto" style={{height:"120px"}}>
+                                    <div class="overflow-auto" style={{height:"100px"}}>
                                     {
                                             selectedCities.map((city, index) => {
                 
@@ -210,6 +203,7 @@ function HeaderAndFooterExample() {
                             </Row>
                             <br></br>
                             <Row>
+                                <br></br>
                                 <div style={{ justifyContent: 'center' }}>
                                     <Button variant="primary" onClick={() => busRouteWithBus()}>Search</Button>
                                 </div>
