@@ -8,37 +8,24 @@ import userIcon from './mapIcon/userIcon';
 //make changes to axios
   
 
-const BusMap = () => {
+export default function  BusMap({ busId }) {
 
-    const [buses, setBuses] = useState([]);
-    const [userPosition, setUserPosition] = useState(null);
+    const [busDetails, setBuses] = useState();
 
     useEffect(() => {
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (location) => {
-                    const { latitude, longitude } = location.coords;
-                    setUserPosition([latitude, longitude]);
-                },
-                (error) => {
-                    console.error("Error fetching user location:", error);
-                }
-            );
-        }
-
         const fetchBusLocations = async () => {
             try {
-                const response = await fetch('https://ba12-192-248-57-153.ngrok-free.app/api/get-bus-locations', {
+                const response = await fetch(`http://localhost:8080/api/get-bus-locations/${busId}`, {
                     method: 'GET',
                     headers: {
-                        'ngrok-skip-browser-warning': 'true', // Set the header with any value
+                        'Content-Type': 'application/json'
+                        //'ngrok-skip-browser-warning': 'true', // Set the header with any value
                     },
                 });
                 
                 const data = await response.json();
                 setBuses(data);
-                console.log(data.busId);
             } catch (error) {
                 console.error('Error fetching bus locations:', error);
             }
@@ -51,51 +38,31 @@ const BusMap = () => {
     }, []);
 
     return (
-        
-        <MapContainer center={[0, 0]} zoom={2} style={{ height: '100vh', width: '100%' }}>
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {/* Zoom user location */}
-            {userPosition && <MapZoomCenter position={userPosition} />}
-            {/* Render user location */}
-            {userPosition && (
-                <>
-                    <Marker position={userPosition} icon={userIcon}>
-                        <Popup>You are here</Popup>
-                    </Marker>
-                    <Circle
-                        center={userPosition}
-                        radius={500} // 500 meters radius
-                        pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.1 }}
-                    />
-                </>
-            )}
-            {buses.map((bus) => (
-                <Marker key={bus.busId} position={[bus.latitude, bus.longitude]} icon={BusIcon}>
+        busDetails ?(
+            <>
+                <MapZoomCenter position={[busDetails.latitude, busDetails.longitude]}/>
+                <Marker key={busDetails.busNameId} position={[busDetails.latitude, busDetails.longitude]} icon={BusIcon}>
                     <Popup>
-                        Bus ID: {bus.busId} <br />
-                        Last Updated: {new Date(bus.lastUpdated).toLocaleString()}
+                        Bus ID: {busDetails.busNameId} <br />
+                        Last Updated: {new Date(busDetails.lastUpdated).toLocaleString()}
                     </Popup>
                 </Marker>
-            ))}
-        </MapContainer>
-    );
+            </>
+        ):
+        (
+            <h1>not loading</h1>//need to add the loading effects
+        )
+    )
 };
 
-const MapZoomCenter = ({ position }) => {
+function MapZoomCenter({ position }) {
     const map = useMap();
 
     useEffect(() => {
         if (position) {
-            map.setView(position, 15); // Set the view to user's location with zoom level 15
+            map.setView(position, 14); // Set the view to user's location with zoom level 15
         }
     }, [position, map]);
 
     return null;
-};
-
-
-
-export default BusMap;
+}
