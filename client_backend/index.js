@@ -7,6 +7,8 @@ const all_routes = require('./all_routes');
 const PORT = process.env.CLIENT_BACKEND_PORT;
 
 const app = express();
+app.use(express.json());
+
 
 app.use(cors(
     {
@@ -16,7 +18,7 @@ app.use(cors(
     }
 ));
 
-app.use(express.json());
+
 app.use('/api', all_routes);
 
 database_connection.database_connection();
