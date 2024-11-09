@@ -4,9 +4,11 @@ const Route = require('./models/busRoute');
 const axios = require('axios');
 
 async function get_bus_location(req, res) {
-
     try {
-        const buses = await Bus.find({});
+        const busId = req.params.busId;
+        console.log(busId)
+        const buses = await Bus.findOne({'busNameId':busId});
+        console.log(buses);
         return res.status(200).json(buses);
     } catch (error) {
         res.status(500).send('Error fetching bus locations');
