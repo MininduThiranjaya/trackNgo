@@ -11,14 +11,13 @@ import { NavLink } from 'react-bootstrap';
 
 
 export default function Client_Bus_Route_Map() {
-    const { routeId, busId} = useParams();
-    console.log(typeof(routeId))
-    console.log(typeof(busId))
+    
+    const { routeId, busId } = useParams();
 
     return (
         <>
             {routeId && busId ? (
-                <ClientMap routeId={routeId} />
+                <ClientMap routeId={routeId} busId={busId}/>
             ) : (
                 <NavLink to={`/error`} activeClassName="active">
                     <Error></Error>
