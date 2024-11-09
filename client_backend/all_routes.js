@@ -9,7 +9,7 @@ route.post('/search_for_buses', all_function.get_buses);
 route.post('/get-specific-bus-route', all_function.get_route);
 
 // API to fetch all bus locations
-route.get('/get-bus-locations', all_function.get_bus_location);
+route.get('/get-bus-locations/:busId', all_function.get_bus_location);
 
 // Get location code by serching 
 route.post('/get-location-code-search-by-name', all_function.get_location_code_search_by_name);
