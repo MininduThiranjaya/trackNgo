@@ -1,33 +1,29 @@
 // src/App.js
 import React from 'react';
-import SearchRoute from '../com/routeSearch';
+import SearchRoute from '../com/searchRoute';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
-import RouteMap from '../com/getRoute';
+import ClientMap from '../com/clientMap';
+import Error from './Error';
+import { NavLink } from 'react-bootstrap';
 
 /* The following line can be included in a src/App.scss */
 
 
-function Client_Bus_Route_Map() {
+export default function Client_Bus_Route_Map() {
     const { routeId, busId} = useParams();
-    console.log(routeId)
-    console.log(busId)
-    
+    console.log(typeof(routeId))
+    console.log(typeof(busId))
 
     return (
-        (routeId && busId ?
-            (
-                <>
-                    <RouteMap routeId={routeId}/>
-                </>
-            ):(
-                <>
-                    <h1>Unable to load the specific location of the route(id not provided)...</h1>
-                </>
-            )
-        )
-        
+        <>
+            {routeId && busId ? (
+                <ClientMap routeId={routeId} />
+            ) : (
+                <NavLink to={`/error`} activeClassName="active">
+                    <Error></Error>
+                </NavLink>
+            )}
+        </>
     );
 }
-
-export default Client_Bus_Route_Map;
