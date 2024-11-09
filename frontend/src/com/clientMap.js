@@ -11,6 +11,7 @@ import polyline from '@mapbox/polyline';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
 import UserLocateButoonCustom from './userLocateButton_custom';
+import BusMap from './busmap';
 
 // Define a function for geocoding
 const geocodeCity = async (city) => {
@@ -33,9 +34,10 @@ const customIcon = new L.Icon({
 });
 
 // Main component
-export default function ClientMap({routeId}) {
+export default function ClientMap({routeId,busId}) {
 
     console.log(routeId)
+    console.log(busId)
 
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -144,6 +146,8 @@ export default function ClientMap({routeId}) {
 
                             <UserLocateButoonCustom/>
 
+                            <BusMap busId={busId}/>
+
                             {/* Plot markers and polyline */}
                             {
                                 locations.map((location, index) => {
@@ -156,7 +160,7 @@ export default function ClientMap({routeId}) {
                                                         Starts : {location.name}
                                                     </Popup>
                                                 </Marker>
-                                                <MapZoomCenter position={locations[0].coords} />
+                                                {/* <MapZoomCenter position={locations[0].coords} /> */}
                                             </>
                                         )
                                     }
@@ -168,7 +172,7 @@ export default function ClientMap({routeId}) {
                                                         Ends : {location.name}
                                                     </Popup>
                                                 </Marker>
-                                                <MapZoomCenter position={locations[0].coords} />
+                                                {/* <MapZoomCenter position={locations[0].coords} /> */}
                                             </>
                                         )
                                     }
@@ -178,7 +182,7 @@ export default function ClientMap({routeId}) {
                                                 <Marker key={index} position={location.coords} icon={SubLocationIcon}>
                                                     <Popup>{location.name}</Popup>
                                                 </Marker>
-                                                <MapZoomCenter position={locations[0].coords} />
+                                                {/* <MapZoomCenter position={locations[0].coords} /> */}
                                             </>
                                         )
                                     }    
@@ -197,6 +201,7 @@ export default function ClientMap({routeId}) {
                                     />
                                 ))
                             }
+                            
                         </MapContainer>
                     </Col>
                 </Row>
