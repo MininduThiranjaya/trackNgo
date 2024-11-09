@@ -14,7 +14,7 @@ import LocateUserButton from './locateUserCustomButton';
 
 // Define a function for geocoding
 const geocodeCity = async (city) => {
-    const apiKey = "AIzaSyAzdhyPxaVbkqp6FMGR4IdJ_-P1GDBNjcU";
+    const apiKey = "AIzaSyAiQ_WJER_3HDCs0B6tH01WPTCzB1COSLA";
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(city)}&key=${apiKey}`;
     const response = await fetch(url);
     
