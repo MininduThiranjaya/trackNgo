@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Circle, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import BusIcon from './busIcon';
-import userIcon from './userIcon';
+import BusIcon from './mapIcon/busIcon';
+import userIcon from './mapIcon/userIcon';
 
 //make changes to axios
   
