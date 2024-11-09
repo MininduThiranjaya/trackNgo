@@ -5,15 +5,18 @@ const axios = require('axios');
 
 async function update_location(req, res) {
 
+    // busNameId = req.params.busId;
+
+    // console.log(busNameId);
+
     const { busId, latitude, longitude, accuracy } = req.body;
-    console.log(`lat : ${busId}`)
     console.log(`lat : ${latitude}`)
     console.log(`lon : ${longitude}`)
     console.log(`acc : ${accuracy}`)
     try {
         await Bus.findOneAndUpdate(
-            { busId },
-            { latitude, longitude, lastUpdated: new Date() },
+            { 'busNameId':busId },
+            { $set: { latitude, longitude, lastUpdated: new Date() }},
             { upsert: true }
         );
         res.status(200).send('Location updated');
