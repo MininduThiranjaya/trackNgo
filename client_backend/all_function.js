@@ -16,7 +16,7 @@ async function get_bus_location(req, res) {
 async function get_location_code_search_by_name(req, res) {
 
     const { sourceLocation, destinationLocation } = req.body;
-    const API_KEY = 'AIzaSyAzdhyPxaVbkqp6FMGR4IdJ_-P1GDBNjcU';
+    const API_KEY = 'AIzaSyAiQ_WJER_3HDCs0B6tH01WPTCzB1COSLA';
 
     console.log(sourceLocation);
     console.log(destinationLocation);
