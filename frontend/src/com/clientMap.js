@@ -1,37 +1,23 @@
+
+
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline} from 'react-leaflet';
+import React, { useState, useEffect} from 'react';
+import polyline from '@mapbox/polyline';
+import axios from 'axios';
+
+//Styles
+import 'leaflet/dist/leaflet.css';
+import { Container, Row, Col} from 'react-bootstrap';
+
+//Custom made button for find user current location
+import UserLocateButoonCustom from './userLocateButton_custom';
+
+//Map icons
+import LocationIcon from './mapIcon/locationIcon';
 import SubLocationIcon from './mapIcon/subLocationIcon';
 
-//search 
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import React, { useState, useEffect} from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, Circle } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import LocationIcon from './mapIcon/locationIcon';
-import polyline from '@mapbox/polyline';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import axios from 'axios';
-import UserLocateButoonCustom from './userLocateButton_custom';
-import BusMap from './busmap';
-
-// Define a function for geocoding
-const geocodeCity = async (city) => {
-    const apiKey = "AIzaSyAiQ_WJER_3HDCs0B6tH01WPTCzB1COSLA";
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(city)}&key=${apiKey}`;
-    const response = await fetch(url);
-    
-    const data = await response.json();
-    if (data.results && data.results.length > 0) {
-        return data.results[0].geometry.location;
-    } else {
-        throw new Error(`Coordinates not found for city: ${city}`);
-    }
-};
-
-const customIcon = new L.Icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
+//Bus live location component
+import BusLiveLocation from './busLiveLocation';
 
 // Main component
 export default function ClientMap({routeId,busId}) {
@@ -40,15 +26,11 @@ export default function ClientMap({routeId,busId}) {
     console.log(busId)
 
     const [locations, setLocations] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    //search
-    // const [destinationPosition, setDestinationPosition] = useState([51.505, -0.09]); // Default center
-    // const [routePathDecode, setRoutePathDecode] = useState([]); // Route coordinates
-    // const [routePathEncode, setRoutePathEncode] = useState([]); // Route coordinates
-    const [sourcePosition, setSourcePosition] = useState([7.8731, 80.7718]); // Default center
-    const [routeSegment, setRouteSegment] = useState([]); // Route coordinates
-
+    const [loading, setLoading] = useState(false);
+    // Sri lanka location
+    const sourcePosition = [7.8731, 80.7718];
+    // Route coordinates
+    const [routeSegment, setRouteSegment] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -72,6 +54,7 @@ export default function ClientMap({routeId,busId}) {
                 const location = await geocodeCity(city);
                 
                 coords.push({ name: city, coords: [location.lat, location.lng] });
+                console.log({ name: city, coords: [location.lat, location.lng] });
             }
 
             //
@@ -107,7 +90,7 @@ export default function ClientMap({routeId,busId}) {
             console.log(routeSegment)
 
             setLocations(coords);
-            setLoading(false);
+            setLoading(true);
         } catch (error) {
             console.error('Error fetching route or coordinates:', error);
             setLoading(false);
@@ -118,99 +101,101 @@ export default function ClientMap({routeId,busId}) {
 
     },[]);
 
-    if (loading) return (
-    <>
-        <Container fluid>
-            <Row className="justify-content-center mt-3">
-                <Col xs={12} md={12} lg={12} style={{ height: '400px'}}>
-                    <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
-                    <UserLocateButoonCustom/>
-                        <TileLayer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        />
-                        
-                    </MapContainer>
-                </Col>
-            </Row>
-        </Container>
-    </>);
-
     return (
-        <>
-            <Container fluid>
-                <Row className="justify-content-center mt-3">
-                    <Col xs={12} md={12} lg={12} style={{ height: '400px', position: 'relative' }}>
-                        <MapContainer center={locations[0].coords} zoom={10} style={{ height: '500px', width: '100%' }}>
-                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
+        (
+            !loading ? (
+                <Container fluid>
+                    <Row className="justify-content-center mt-3">
+                        <Col xs={12} md={12} lg={12} style={{ height: '400px'}}>
+                            <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
                             <UserLocateButoonCustom/>
+                                <TileLayer
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                />
+                                
+                            </MapContainer>
+                        </Col>
+                    </Row>
+                </Container>
+            ):(
+                <>
+                    <Container fluid>
+                        <Row className="justify-content-center mt-3">
+                            <Col xs={12} md={12} lg={12} style={{ height: '400px', position: 'relative' }}>
+                                <MapContainer center={locations[0].coords} zoom={10} style={{ height: '500px', width: '100%' }}>
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-                            <BusMap busId={busId}/>
-
-                            {/* Plot markers and polyline */}
-                            {
-                                locations.map((location, index) => {
                                     
-                                    if(index === 0 ) {
-                                        return (
-                                            <>
-                                                <Marker key={index} position={location.coords} icon={LocationIcon}>
-                                                    <Popup>
-                                                        Starts : {location.name}
-                                                    </Popup>
-                                                </Marker>
-                                                {/* <MapZoomCenter position={locations[0].coords} /> */}
-                                            </>
-                                        )
+                                    <UserLocateButoonCustom/>
+
+                                    {/* <BusLiveLocation busId={busId}/> */}
+
+                                    {/* Plot markers on the map and draw route path using polyline */}
+                                    {
+                                        locations.map((location, index) => {
+                                            
+                                            if(index === 0 ) {
+                                                return (
+                                                    <>
+                                                        <Marker key={index} position={location.coords} icon={LocationIcon}>
+                                                            <Popup>
+                                                                Starts : {location.name}
+                                                            </Popup>
+                                                        </Marker>
+                                                        {/* <MapZoomCenter position={locations[0].coords} /> */}
+                                                    </>
+                                                )
+                                            }
+                                            else if(index === locations.length-1) {
+                                                return (
+                                                    <>
+                                                        <Marker key={index} position={location.coords} icon={LocationIcon}>
+                                                            <Popup>
+                                                                Ends : {location.name}
+                                                            </Popup>
+                                                        </Marker>
+                                                    </>
+                                                )
+                                            }
+                                            else {
+                                                return (
+                                                    <>
+                                                        <Marker key={index} position={location.coords} icon={SubLocationIcon}>
+                                                            <Popup>{location.name}</Popup>
+                                                        </Marker>
+                                                    </>
+                                                )
+                                            }    
+                                        })
                                     }
-                                    else if(index === locations.length-1) {
-                                        return (
-                                            <>
-                                                <Marker key={index} position={location.coords} icon={LocationIcon}>
-                                                    <Popup>
-                                                        Ends : {location.name}
-                                                    </Popup>
-                                                </Marker>
-                                                {/* <MapZoomCenter position={locations[0].coords} /> */}
-                                            </>
-                                        )
+                                    {
+                                        (routeSegment.length > 0 && (
+                                            <Polyline
+                                                positions={routeSegment.flatMap((seg, index) => {
+                                                    const decode = polyline.decode(seg[0]).map(([lat, lng]) => ({lat,lng}))
+                                                    
+                                                    return (decode);
+                                                })}
+                                                color="blue"
+                                                weight={4}
+                                                opacity={0.5}
+                                            />
+                                        ))
                                     }
-                                    else {
-                                        return (
-                                            <>
-                                                <Marker key={index} position={location.coords} icon={SubLocationIcon}>
-                                                    <Popup>{location.name}</Popup>
-                                                </Marker>
-                                                {/* <MapZoomCenter position={locations[0].coords} /> */}
-                                            </>
-                                        )
-                                    }    
-                                })
-                            }
-                            {
-                                (routeSegment.length > 0 && (
-                                    <Polyline
-                                        positions={routeSegment.map((seg, index) => {
-                                            const decode = polyline.decode(seg[0]).map(([lat, lng]) => ({lat,lng}))
-                                            return (decode);
-                                        })}
-                                        color="blue"
-                                        weight={4}
-                                        opacity={0.5}
-                                    />
-                                ))
-                            }
-                            
-                        </MapContainer>
-                    </Col>
-                </Row>
-            </Container>
-        </>
+                                    
+                                </MapContainer>
+                            </Col>
+                        </Row>
+                    </Container>
+                </>
+            )
+        )
+        
     );
 };
 
-//search
+//Map zoom
 const MapZoomCenter = ({ position }) => {
     
     const map = useMap();
@@ -222,4 +207,18 @@ const MapZoomCenter = ({ position }) => {
     }, [position, map]);
 
     return null;
+};
+
+//Convert city names into lat lng(location code)
+const geocodeCity = async (city) => {
+    const apiKey = "AIzaSyAiQ_WJER_3HDCs0B6tH01WPTCzB1COSLA";
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(city)}&key=${apiKey}`;
+    const response = await fetch(url);
+    
+    const data = await response.json();
+    if (data.results && data.results.length > 0) {
+        return data.results[0].geometry.location;
+    } else {
+        throw new Error(`Coordinates not found for city: ${city}`);
+    }
 };
