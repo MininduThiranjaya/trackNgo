@@ -84,19 +84,13 @@ async function get_buses(req, res) {
     console.log(destinationLocation)
 
     try {
-        // const busRouteWithBus = await Route.find({
-        //     $and: [
-        //         { $expr: { $eq: ["$source", `${sourceLocation}`] } },
-        //         { $expr: { $eq: ["$destination", `${destinationLocation}`] } }
-        //     ]
-        // });
 
         const busRouteWithBus = await Route.aggregate(
             [
                 {
                     "$match": {
-                        "source": "polonnaruwa",
-                        "destination": "kurunegala"
+                        "source": sourceLocation,
+                        "destination": destinationLocation
                     }
                 },
                 {
@@ -140,6 +134,7 @@ async function get_buses(req, res) {
             ]
             
         )
+
         console.log(busRouteWithBus)
         res.json({busRouteWithBus});
     } catch (error) {
