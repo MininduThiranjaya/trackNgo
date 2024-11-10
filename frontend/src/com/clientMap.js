@@ -104,20 +104,21 @@ export default function ClientMap({routeId,busId}) {
     return (
         (
             !loading ? (
-                <Container fluid>
-                    <Row className="justify-content-center mt-3">
-                        <Col xs={12} md={12} lg={12} style={{ height: '400px'}}>
-                            <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
-                            <UserLocateButoonCustom/>
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                // <Container fluid>
+                //     <Row className="justify-content-center mt-3">
+                //         <Col xs={12} md={12} lg={12} style={{ height: '400px'}}>
+                //             <MapContainer center={sourcePosition} zoom={8} style={{ height: "100vh", width: "100%" }}>
+                //             <UserLocateButoonCustom/>
+                //                 <TileLayer
+                //                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                //                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                //                 />
                                 
-                            </MapContainer>
-                        </Col>
-                    </Row>
-                </Container>
+                //             </MapContainer>
+                //         </Col>
+                //     </Row>
+                // </Container>
+                <h1>Loading...</h1>//need to add the loading effects
             ):(
                 <>
                     <Container fluid>
