@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
-import style from '../assets/leaflet_css.css'
 import { createRoot } from 'react-dom/client';
-import { MapContainer, TileLayer, Circle, Marker, useMap } from 'react-leaflet';
+import { Circle, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import UserIcon from './mapIcon/userIcon';
 
 
-// Custom control component to render Bootstrap switch buttons on Leaflet map
+// Main component - custom made switch for locate user current location
 export default function UserLocateButoonCustom() {
 
     const [position, setPosition] = useState(null);
     const [makeUserVisible, setUserVisible] = useState(false)
+    const defaultPosition = [7.8731, 80.7718];//Sri lanka default position
     
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function UserLocateButoonCustom() {
         const switchControl = L.control({ position: 'topright' });
 
         switchControl.onAdd = () => {
-            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            const div = L.DomUtil.create('div', 'leaflet-control leaflet-control-custom');
 
             // Prevent clicks on the form from interacting with the map
             L.DomEvent.disableClickPropagation(div);
@@ -66,19 +66,6 @@ export default function UserLocateButoonCustom() {
                                     setUserVisible(false);
                                 }
                             }
-                            // (e.target.checked && position ? (
-                            //     <>
-                            //         <Marker position={position} icon={customIcon}></Marker>
-                            //         <Circle
-                            //             center={position}
-                            //             radius={500} // 500 meters
-                            //             pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.2 }}
-                            //         />
-                            //         <zoomUseLocation position={position} />
-                            //     </>
-                            // ):(
-                            //     null
-                            // ))
                         }
                     />
                 </Form>
@@ -102,31 +89,42 @@ export default function UserLocateButoonCustom() {
     if(position && makeUserVisible) {
         return (
             <>
+                <MapZoomCenter position={position} isActive={makeUserVisible}></MapZoomCenter>
                 <Marker position={position} icon={UserIcon}></Marker>
                 <Circle
                     center={position}
                     radius={1000} // 500 meters
-                    pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.2 }}
+                    pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.1 }}
                 />
-                <MapZoomCenter position={position}></MapZoomCenter>
             </>
         )
     }
     else {
-        return null;
+        return (
+            <>
+                <MapZoomCenter position={defaultPosition} isActive={makeUserVisible}></MapZoomCenter>
+            </>
+        )
     }
 };
 
-//search
-const MapZoomCenter = ({ position }) => {
+//Map zoom
+const MapZoomCenter = ({ position, isActive }) => {
     
     const map = useMap();
 
     useEffect(() => {
-        if (position) {
-            map.setView(position, 15); // Set the view to user's location with zoom level 15
-        }
-    }, [position, map]);
+        const zoomLevel = isActive ? 15 : 8;
+        const animationDuration = 2.5; // duration in seconds for the slow-motion effect
 
-    return null;
+        // Use flyTo with a slow-motion effect
+        map.flyTo(position, zoomLevel, {
+            animate: true,
+            duration: animationDuration, // control speed of the animation
+            easeLinearity: 0.1 // adjust this for smoother, slower transitions (0.25 to 0.5 recommended)
+        });
+
+    }, [position, isActive, map]);
+
+    return true;
 }
