@@ -94,17 +94,18 @@ async function get_buses(req, res) {
                     }
                 },
                 {
+                    "$unwind": "$busName"                  // Unwind busName array to access each bus's details
+                },
+                {
                     "$lookup": {
                         "from": "buses",
-                        "localField": "busName",
+                        "localField": "busName.name",       // Match busName name to busNameId in buses collection
                         "foreignField": "busNameId",
                         "as": "details"
                     }
                 },
                 {
-                    "$unwind": {
-                        "path": "$details"
-                    }
+                    "$unwind": "$details"                  // Unwind details array to pair with each bus
                 },
                 {
                     "$group": {
@@ -112,12 +113,13 @@ async function get_buses(req, res) {
                             "_id": "$_id",
                             "source": "$source",
                             "stops": "$stops",
-                            "destination": "$destination",
+                            "destination": "$destination"
                         },
-                        "busInfo": {                           // Aggregate bus info into an array
-                            "$push": {
+                        "busInfo": {
+                            "$push": {                     // Aggregate each bus's info including name, action, and isActive
                                 "busNameId": "$details.busNameId",
-                                "isActive": "$details.isActive"
+                                "isActive": "$details.isActive",
+                                "action": "$busName.action"
                             }
                         }
                     }
@@ -128,11 +130,10 @@ async function get_buses(req, res) {
                         "source": "$_id.source",
                         "stops": "$_id.stops",
                         "destination": "$_id.destination",
-                        "busInfo": 1                           // Include the aggregated bus info array
+                        "busInfo": 1                       // Include the aggregated busInfo array with name, action, and isActive
                     }
                 }
-            ]
-            
+            ]            
         )
 
         console.log(busRouteWithBus)
