@@ -1,12 +1,9 @@
 // src/components/BusMap.js
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Circle, Popup, useMap } from 'react-leaflet';
+import { Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import BusIcon from './mapIcon/busIcon';
-import userIcon from './mapIcon/userIcon';
 
-//make changes to axios
-  
+import BusIcon from './mapIcon/busIcon';
 
 export default function  BusLiveLocation({ busId }) {
 
