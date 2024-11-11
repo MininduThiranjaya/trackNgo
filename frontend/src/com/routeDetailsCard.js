@@ -36,7 +36,7 @@ export default function RouteDetailsCard({busRouteWithBus}) {
                     <p>
                       <b>Buses :</b> 
                     </p>
-                    <Container>
+                    <Container key={index}>
                       <Row className='g-2'>
                         {
                           ((e.busInfo.length > 0)?
@@ -48,9 +48,6 @@ export default function RouteDetailsCard({busRouteWithBus}) {
                                   <Col xs={12} md={2}>{bus.busNameId}</Col>
                                   <Col xs={12} md={3}>Location</Col>
                                   <Col xs={12} md={4}>
-                                  {
-                                    console.log()
-                                  }
                                   {
                                     (bus.isActive ?
                                       ( 
@@ -66,11 +63,11 @@ export default function RouteDetailsCard({busRouteWithBus}) {
                                   }
                                     
                                   </Col>
-                                  <Col xs={12} md={3}>
-                                  <NavLink to={`/client-bus-route-map/${e._id}/${bus.busNameId}`} activeClassName="active">
-                                    <FontAwesomeIcon icon={faLocationCrosshairs} size="lg"  className='px-1' style={{color: "#3512e2"}} />
-                                    Find Me
-                                  </NavLink>
+                                    <Col xs={12} md={3}>
+                                    <NavLink to={`/client-bus-route-map/${e._id}/${bus.busNameId}`} activeClassName="active">
+                                      <FontAwesomeIcon icon={faLocationCrosshairs} size="lg"  className='px-1' style={{color: "#3512e2"}} />
+                                      Find Me
+                                    </NavLink>
                                   </Col>
                                   <hr></hr>
                                 </>
