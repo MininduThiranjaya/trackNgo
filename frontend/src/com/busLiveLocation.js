@@ -38,7 +38,7 @@ export default function  BusLiveLocation({ busId }) {
         busDetails ?(
             busDetails.isActive ?(
                 <>
-                    <MapZoomCenter position={[busDetails.latitude, busDetails.longitude]}/>
+                    {/* <MapZoomCenter position={[busDetails.latitude, busDetails.longitude]}/> */}
                     <Marker key={busDetails.busNameId} position={[busDetails.latitude, busDetails.longitude]} icon={BusIcon}>
                         <Popup>
                             Bus ID: {busDetails.busNameId} <br />
