@@ -116,7 +116,7 @@ export default function ClientMap({routeId,busId}) {
                                     
                                     <UserLocateButoonCustom/>
 
-                                    {/* <BusLiveLocation busId={busId}/> */}
+                                    <BusLiveLocation busId={busId}/>
 
                                     {/* Plot markers on the map and draw route path using polyline */}
                                     {
