@@ -9,14 +9,17 @@ import Error from './Error'; // Error page
 
 export default function Client_Bus_Route_Map() {
     
-    const { routeId, busId } = useParams(); // extract routeId and BusId from URL
+    const { busRouteId, busNumber } = useParams(); // extract routeId and BusId from URL
+
+    console.log(busRouteId)
+    console.log(busNumber)
 
     return (
 
         //check the route or bus id is missing or not, if not navigae to error page
         <>
-            {routeId && busId ? (
-                <ClientMap routeId={routeId} busId={busId}/>
+            {busRouteId && busNumber ? (
+                <ClientMap busRouteId={busRouteId}  busNumber={busNumber}/>
             ) : (
                 <NavLink to={`/error`} activeClassName="active">
                     <Error></Error>
