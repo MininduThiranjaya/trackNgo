@@ -1,6 +1,7 @@
-const Bus = require('../models/bus');
-const BusLocation = require('../models/busLocation');
+const Bus = require('../models/busModel');
 const Route = require('../models/busRoute');
+const BusRoute = require('../models/busRouteModel');
+const BusLocation = require('../models/busLocationModel');
 
 const axios = require('axios');
 
