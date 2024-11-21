@@ -22,6 +22,7 @@ export default function  BusLiveLocation({ busId }) {
                 });
                 
                 const data = await response.json();
+                console.log(data)
                 setBuses(data);
             } catch (error) {
                 console.error('Error fetching bus locations:', error);
@@ -36,12 +37,12 @@ export default function  BusLiveLocation({ busId }) {
 
     return (
         busDetails ?(
-            busDetails.isActive ?(
+            busDetails ?(
                 <>
                     {/* <MapZoomCenter position={[busDetails.latitude, busDetails.longitude]}/> */}
-                    <Marker key={busDetails.busNameId} position={[busDetails.latitude, busDetails.longitude]} icon={BusIcon}>
+                    <Marker key={busDetails.busNumber} position={[busDetails.latitude, busDetails.longitude]} icon={BusIcon}>
                         <Popup>
-                            Bus ID: {busDetails.busNameId} <br />
+                            Bus ID: {busDetails.busNumber} <br />
                             Last Updated: {new Date(busDetails.lastUpdated).toLocaleString()}
                         </Popup>
                     </Marker>
