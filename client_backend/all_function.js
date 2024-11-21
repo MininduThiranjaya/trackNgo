@@ -7,7 +7,7 @@ async function get_bus_location(req, res) {
     try {
         const busId = req.params.busId;
         console.log(busId)
-        const buses = await Bus.findOne({'busNameId':busId});
+        const buses = await Bus.findOne({'busNumber':busId});
         console.log(buses);
         return res.status(200).json(buses);
     } catch (error) {
