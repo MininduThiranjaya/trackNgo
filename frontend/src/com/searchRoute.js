@@ -23,8 +23,8 @@ export default function SearchRouteCard() {
     const [inputValueDestination, setInputValueDestination] = useState('');
     
     //Source and Destination location can be changed
-    let [sourceLocation, setStart] = useState();
-    let [destinationLocation, setEnd] = useState();
+    let [startLocation, setStart] = useState();
+    let [endLocation, setEnd] = useState();
 
     const cities = [
         "Colombo",
@@ -123,25 +123,25 @@ export default function SearchRouteCard() {
     //Fetching selected bus route from backend - find results
     async function busRouteWithBus () {
 
-        if(!sourceLocation) {
+        if(!startLocation) {
             setStart(inputValueSource)
         }
         else{
-            sourceLocation = sourceLocation.toLowerCase();
+            startLocation = startLocation.toLowerCase();
         }
         
-        if(!destinationLocation){
+        if(!endLocation){
             setEnd(inputValueDestination);
         }
         else {
-            destinationLocation = destinationLocation.toLowerCase();
+            endLocation = endLocation.toLowerCase();
         }
 
         try {
             // Fetch route data from backend
             const response = await axios.post('http://localhost:8080/api-user/search_for_buses', {
-                sourceLocation,
-                destinationLocation
+                startLocation,
+                endLocation
             });
             
             const {busRouteWithBus} = response.data;

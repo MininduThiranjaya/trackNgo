@@ -20,10 +20,10 @@ import SubLocationIcon from './mapIcon/subLocationIcon';
 import BusLiveLocation from './busLiveLocation';
 
 // Main component
-export default function ClientMap({routeId,busId}) {
+export default function ClientMap({busRouteId,busNumber}) {
 
-    console.log(routeId)
-    console.log(busId)
+    // console.log(busRouteId)
+    // console.log(busNumber)
 
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -35,18 +35,18 @@ export default function ClientMap({routeId,busId}) {
 
     useEffect(() => {
 
-        const fetchRouteData = async (routeId) => {
+        const fetchRouteData = async (busRouteId) => {
 
          try {
             // Fetch route data from backend
             const response = await axios.post('http://localhost:8080/api-user/get-specific-bus-route', {
-                routeId
+                busRouteId
             });
             
             const {specificBusRoute} = response.data;
 
             // Gather all cities
-            const cities = [specificBusRoute.source, ...specificBusRoute.stops, specificBusRoute.destination];
+            const cities = [specificBusRoute.startLocation, ...specificBusRoute.routeStops, specificBusRoute.endLocation];
             const coords = [];
 
             // Fetch coordinates for each city
@@ -54,22 +54,22 @@ export default function ClientMap({routeId,busId}) {
                 const location = await geocodeCity(city);
                 
                 coords.push({ name: city, coords: [location.lat, location.lng] });
-                console.log({ name: city, coords: [location.lat, location.lng] });
+                // console.log({ name: city, coords: [location.lat, location.lng] });
             }
 
             //
             const segments = [];
 
             for (let i = 0; i < cities.length - 1; i++) {
-                const sourceLocation = (cities[i]);
-                const destinationLocation = (cities[i + 1]);
+                const startLocation = (cities[i]);
+                const endLocation = (cities[i + 1]);
 
                 const response = await axios.post('http://localhost:8080/api-user/get-location-code-search-by-name', {
-                                sourceLocation,
-                                destinationLocation
-                            });
+                    startLocation,
+                    endLocation
+                });
                 
-                console.log(response);
+                // console.log(response);
 
                 if (response.data) {
 
@@ -87,7 +87,7 @@ export default function ClientMap({routeId,busId}) {
             }
             
             setRouteSegment(segments);
-            console.log(routeSegment)
+            // console.log(routeSegment)
 
             setLocations(coords);
             setLoading(true);
@@ -97,7 +97,7 @@ export default function ClientMap({routeId,busId}) {
         }
     }
 
-     fetchRouteData(routeId);
+     fetchRouteData(busRouteId);
 
     },[]);
 
@@ -116,7 +116,7 @@ export default function ClientMap({routeId,busId}) {
                                     
                                     <UserLocateButoonCustom/>
 
-                                    <BusLiveLocation busId={busId}/>
+                                    <BusLiveLocation busId={busNumber}/>
 
                                     {/* Plot markers on the map and draw route path using polyline */}
                                     {
@@ -170,7 +170,6 @@ export default function ClientMap({routeId,busId}) {
                                             />
                                         ))
                                     }
-                                    
                                 </MapContainer>
                             </Col>
                         </Row>
