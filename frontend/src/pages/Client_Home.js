@@ -7,7 +7,7 @@ import SearchRoute from '../com/searchRoute'; // Search route component
 function Client_Home() {
     return (
         <>
-            <SearchRoute></SearchRoute>
+            <SearchRoute/>
         </>
     );
 }
