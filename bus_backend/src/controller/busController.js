@@ -1,4 +1,4 @@
-const Bus = require('../models/bus');
+const BusLocation = require('../models/busLocation');
 
 const axios = require('axios');
 
@@ -10,7 +10,7 @@ async function updateBusLocatioin(req, res) {
     console.log(`lon : ${longitude}`)
     console.log(`acc : ${accuracy}`)
     try {
-        await Bus.findOneAndUpdate(
+        await BusLocation.findOneAndUpdate(
             { 'busNumber':busNumber },
             { $set: { latitude, longitude, timestamps: new Date() }},
             { upsert: true }
