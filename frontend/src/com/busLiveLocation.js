@@ -13,7 +13,7 @@ export default function  BusLiveLocation({ busId }) {
 
         const fetchBusLocations = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/get-bus-locations/${busId}`, {
+                const response = await fetch(`http://localhost:8080/api-user/get-bus-locations/${busId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

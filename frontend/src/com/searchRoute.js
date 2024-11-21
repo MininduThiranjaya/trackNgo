@@ -139,7 +139,7 @@ export default function SearchRouteCard() {
 
         try {
             // Fetch route data from backend
-            const response = await axios.post('http://localhost:8080/api/search_for_buses', {
+            const response = await axios.post('http://localhost:8080/api-user/search_for_buses', {
                 sourceLocation,
                 destinationLocation
             });

@@ -39,7 +39,7 @@ export default function ClientMap({routeId,busId}) {
 
          try {
             // Fetch route data from backend
-            const response = await axios.post('http://localhost:8080/api/get-specific-bus-route', {
+            const response = await axios.post('http://localhost:8080/api-user/get-specific-bus-route', {
                 routeId
             });
             
@@ -64,7 +64,7 @@ export default function ClientMap({routeId,busId}) {
                 const sourceLocation = (cities[i]);
                 const destinationLocation = (cities[i + 1]);
 
-                const response = await axios.post('http://localhost:8080/api/get-location-code-search-by-name', {
+                const response = await axios.post('http://localhost:8080/api-user/get-location-code-search-by-name', {
                                 sourceLocation,
                                 destinationLocation
                             });
