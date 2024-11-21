@@ -1,4 +1,5 @@
 const Bus = require('../models/bus');
+const BusLocation = require('../models/busLocation');
 const Route = require('../models/busRoute');
 
 const axios = require('axios');
@@ -7,7 +8,7 @@ async function getBusLocation(req, res) {
     try {
         const busId = req.params.busId;
         console.log(busId)
-        const buses = await Bus.findOne({'busNumber':busId});
+        const buses = await BusLocation.findOne({'busNumber':busId});
         console.log(buses);
         return res.status(200).json(buses);
     } catch (error) {
