@@ -1,5 +1,6 @@
-const Bus = require('../models/busModel');
-const Route = require('../models/busRoute');
+
+// const Bus = require('../models/busModel');
+// const Route = require('../models/busRoute');
 const BusRoute = require('../models/busRouteModel');
 const BusLocation = require('../models/busLocationModel');
 
@@ -19,31 +20,31 @@ async function getBusLocation(req, res) {
 
 async function getLocationCodeSearchByName(req, res) {
 
-    const { sourceLocation, destinationLocation } = req.body;
+    const { startLocation, endLocation } = req.body;
     const API_KEY = 'AIzaSyAiQ_WJER_3HDCs0B6tH01WPTCzB1COSLA';
 
-    console.log(sourceLocation);
-    console.log(destinationLocation);
+    console.log(startLocation);
+    console.log(endLocation);
 
     try {
-        const sourceResponse = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+        const startLocationResponse = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
             params: {
-                address: sourceLocation,
+                address: startLocation,
                 key: API_KEY,
             },
         });
 
-        const destinationResponse = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+        const endLocationResponse = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
             params: {
-                address: destinationLocation,
+                address: endLocation,
                 key: API_KEY,
             },
         });
 
-        if (sourceResponse.data.status === "OK" && destinationResponse.data.status === "OK") {
+        if (startLocationResponse.data.status === "OK" && endLocationResponse.data.status === "OK") {
 
-            const sourceLocation = sourceResponse.data.results[0].geometry.location;
-            const destinationLocation = destinationResponse.data.results[0].geometry.location;
+            const sourceLocation = startLocationResponse.data.results[0].geometry.location;
+            const destinationLocation = endLocationResponse.data.results[0].geometry.location;
             
             // Get the route path between start and end locations
             const response = await axios.get('https://maps.googleapis.com/maps/api/directions/json', {
@@ -78,64 +79,87 @@ async function getLocationCodeSearchByName(req, res) {
 
 
 
+// async function getBus(req, res) {
+
+//     const { startLocation, endLocation } = req.body;
+
+//     console.log(startLocation)
+//     console.log(endLocation)
+
+//     try {
+
+//         const busRouteWithBus = await Route.aggregate(
+//             [
+//                 {
+//                     "$match": {
+//                         "source": startLocation,
+//                         "destination": endLocation
+//                     }
+//                 },
+//                 {
+//                     "$unwind": "$busName"                  // Unwind busName array to access each bus's details
+//                 },
+//                 {
+//                     "$lookup": {
+//                         "from": "buses",
+//                         "localField": "busName.name",       // Match busName name to busNameId in buses collection
+//                         "foreignField": "busNameId",
+//                         "as": "details"
+//                     }
+//                 },
+//                 {
+//                     "$unwind": "$details"                  // Unwind details array to pair with each bus
+//                 },
+//                 {
+//                     "$group": {
+//                         "_id": {
+//                             "_id": "$_id",
+//                             "source": "$source",
+//                             "stops": "$stops",
+//                             "destination": "$destination"
+//                         },
+//                         "busInfo": {
+//                             "$push": {                     // Aggregate each bus's info including name, action, and isActive
+//                                 "busNameId": "$details.busNameId",
+//                                 "isActive": "$details.isActive",
+//                                 "action": "$busName.action"
+//                             }
+//                         }
+//                     }
+//                 },
+//                 {
+//                     "$project": {
+//                         "_id": "$_id._id",
+//                         "source": "$_id.source",
+//                         "stops": "$_id.stops",
+//                         "destination": "$_id.destination",
+//                         "busInfo": 1                       // Include the aggregated busInfo array with name, action, and isActive
+//                     }
+//                 }
+//             ]            
+//         )
+
+//         console.log(busRouteWithBus)
+//         res.json({busRouteWithBus});
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error fetching route', error });
+//     }  
+// }
+
 async function getBus(req, res) {
 
-    const { sourceLocation, destinationLocation } = req.body;
+    const { startLocation, endLocation } = req.body;
 
-    console.log(sourceLocation)
-    console.log(destinationLocation)
+    console.log(startLocation)
+    console.log(endLocation)
 
     try {
 
-        const busRouteWithBus = await Route.aggregate(
-            [
-                {
-                    "$match": {
-                        "source": sourceLocation,
-                        "destination": destinationLocation
-                    }
-                },
-                {
-                    "$unwind": "$busName"                  // Unwind busName array to access each bus's details
-                },
-                {
-                    "$lookup": {
-                        "from": "buses",
-                        "localField": "busName.name",       // Match busName name to busNameId in buses collection
-                        "foreignField": "busNameId",
-                        "as": "details"
-                    }
-                },
-                {
-                    "$unwind": "$details"                  // Unwind details array to pair with each bus
-                },
-                {
-                    "$group": {
-                        "_id": {
-                            "_id": "$_id",
-                            "source": "$source",
-                            "stops": "$stops",
-                            "destination": "$destination"
-                        },
-                        "busInfo": {
-                            "$push": {                     // Aggregate each bus's info including name, action, and isActive
-                                "busNameId": "$details.busNameId",
-                                "isActive": "$details.isActive",
-                                "action": "$busName.action"
-                            }
-                        }
-                    }
-                },
-                {
-                    "$project": {
-                        "_id": "$_id._id",
-                        "source": "$_id.source",
-                        "stops": "$_id.stops",
-                        "destination": "$_id.destination",
-                        "busInfo": 1                       // Include the aggregated busInfo array with name, action, and isActive
-                    }
-                }
-            ]            
+        const busRouteWithBus = await BusRoute.find(
+            {
+                "startLocation":startLocation,
+                "endLocation":endLocation
+            }
         )
 
         console.log(busRouteWithBus)
@@ -147,12 +171,12 @@ async function getBus(req, res) {
 
 async function getRoute(req, res) {
 
-    const { routeId } = req.body;
+    const { busRouteId } = req.body;
 
-    console.log(routeId)
+    console.log(busRouteId)
 
     try {
-        const specificBusRoute = await Route.findById(routeId)
+        const specificBusRoute = await BusRoute.findById(busRouteId)
 
         console.log(specificBusRoute)
 
