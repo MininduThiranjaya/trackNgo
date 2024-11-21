@@ -12,8 +12,7 @@ async function updateBusLocatioin(req, res) {
     try {
         await BusLocation.findOneAndUpdate(
             { 'busNumber':busNumber },
-            { $set: { latitude, longitude, timestamps: new Date() }},
-            { upsert: true }
+            { $set: { latitude, longitude, lastUpdated: new Date() }},
         );
         res.status(200).send('Location updated');
     } catch (error) {
