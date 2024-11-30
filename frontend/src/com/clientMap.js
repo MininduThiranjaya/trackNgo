@@ -161,7 +161,7 @@ export default function ClientMap({busRouteId,busNumber}) {
                                             <Polyline
                                                 positions={routeSegment.flatMap((seg, index) => {
                                                     const decode = polyline.decode(seg[0]).map(([lat, lng]) => ({lat,lng}))
-                                                    
+                                                    console.log(typeof(polyline.decode(seg[0])))
                                                     return (decode);
                                                 })}
                                                 color="blue"
