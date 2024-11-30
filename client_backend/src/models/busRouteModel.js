@@ -23,10 +23,10 @@ const busRouteSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    status: {
-      type: [Boolean],
-      default: false,
-    },
+    // status: {
+    //   type: [Boolean],
+    //   default: false,
+    // },
   },
   { timestamps: true }
 )
