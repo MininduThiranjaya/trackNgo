@@ -59,6 +59,11 @@ async function getLocationCodeSearchByName(req, res) {
 
                 const route = response.data.routes[0].overview_polyline.points
 
+                console.log(typeof(sourceLocation));
+                console.log(typeof(destinationLocation));
+                console.log(typeof(route));
+                
+
                 res.json({
                     sourceLocation,
                     destinationLocation,
@@ -171,12 +176,12 @@ async function getBus(req, res) {
 
 async function getRoute(req, res) {
 
-    const { busRouteId } = req.body;
+    const { busNumber } = req.body;
 
-    console.log(busRouteId)
+    console.log(busNumber)
 
     try {
-        const specificBusRoute = await BusRoute.findById(busRouteId)
+        const specificBusRoute = await BusRoute.findOne({"busNumber":busNumber})
 
         console.log(specificBusRoute)
 
