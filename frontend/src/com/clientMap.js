@@ -39,7 +39,7 @@ export default function ClientMap({busRouteId,busNumber}) {
 
          try {
             // Fetch route data from backend
-            const response = await axios.post('http://localhost:8080/api-user/get-specific-bus-route', {
+            const response = await axios.post('https://eada-192-248-57-153.ngrok-free.app/api-user/get-specific-bus-route', {
                 busRouteId
             });
             
@@ -54,7 +54,7 @@ export default function ClientMap({busRouteId,busNumber}) {
                 const location = await geocodeCity(city);
                 
                 coords.push({ name: city, coords: [location.lat, location.lng] });
-                // console.log({ name: city, coords: [location.lat, location.lng] });
+                console.log({ name: city, coords: [location.lat, location.lng] });
             }
 
             //
@@ -64,7 +64,7 @@ export default function ClientMap({busRouteId,busNumber}) {
                 const startLocation = (cities[i]);
                 const endLocation = (cities[i + 1]);
 
-                const response = await axios.post('http://localhost:8080/api-user/get-location-code-search-by-name', {
+                const response = await axios.post('https://eada-192-248-57-153.ngrok-free.app/api-user/get-location-code-search-by-name', {
                     startLocation,
                     endLocation
                 });

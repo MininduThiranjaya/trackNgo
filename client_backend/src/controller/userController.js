@@ -62,6 +62,8 @@ async function getLocationCodeSearchByName(req, res) {
                 console.log(typeof(sourceLocation));
                 console.log(typeof(destinationLocation));
                 console.log(typeof(route));
+
+                console.log(route)
                 
 
                 res.json({
@@ -176,12 +178,12 @@ async function getBus(req, res) {
 
 async function getRoute(req, res) {
 
-    const { busNumber } = req.body;
+    const { busRouteId } = req.body;
 
-    console.log(busNumber)
+    console.log("hh",busRouteId)
 
     try {
-        const specificBusRoute = await BusRoute.findOne({"busNumber":busNumber})
+        const specificBusRoute = await BusRoute.findById(busRouteId)
 
         console.log(specificBusRoute)
 
@@ -191,10 +193,31 @@ async function getRoute(req, res) {
     }  
 }
 
+async function getDistance(req,res) {
+    
+    const { first, second } = req.body
+    console.log('Request received with origins:', first, 'and destinations:', second); // Log the input
+    const apiKey = 'AIzaSyAiQ_WJER_3HDCs0B6tH01WPTCzB1COSLA';
+
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${first.lat},${first.lng}&destinations=${second.lat},${second.lng}&key=${apiKey}&mode=DRIVING`;
+    try {
+        const response = await axios.get(url);
+        if(response) {
+
+            const distance = response.data.rows[0].elements[0].distance.value; // Distance in meters
+            const duration = response.data.rows[0].elements[0].duration.value; // Distance in meters
+            res.status(200).send({distance,duration});
+        }
+    } catch (error) {
+        res.status(500).send('Cannot get distance');
+    }
+}
+
 
 module.exports = {
     getRoute,
     getBusLocation,
     getLocationCodeSearchByName,
-    getBus
+    getBus,
+    getDistance
 }

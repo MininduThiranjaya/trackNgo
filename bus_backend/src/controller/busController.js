@@ -1,7 +1,5 @@
 const BusLocation = require('../models/busLocation');
 
-const axios = require('axios');
-
 async function updateBusLocatioin(req, res) {
 
     const { busNumber, latitude, longitude, accuracy } = req.body;
